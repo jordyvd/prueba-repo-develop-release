@@ -2,8 +2,6 @@ name: Check branch sync
 
 on:
   pull_request:
-    branches:
-      - release
 
 jobs:
   check-sync:
@@ -17,15 +15,15 @@ jobs:
 
       - name: Fetch branches
         run: |
-          git fetch origin release
+          git fetch origin ${{ github.base_ref }}
           git fetch origin ${{ github.head_ref }}
 
-      - name: Check that release has no unique commits
+      - name: Check that ${{ github.base_ref }} has no unique commits
         run: |
-          DIFF=$(git log origin/${{ github.head_ref }}..origin/release --no-merges)
+          DIFF=$(git log origin/${{ github.head_ref }}..origin/${{ github.base_ref }} --no-merges)
 
           if [ -n "$DIFF" ]; then
-            echo "❌ Release has commits that are not in the PR branch:"
+            echo "❌ Branch '${{ github.base_ref }}' has commits not present in '${{ github.head_ref }}':"
             echo "$DIFF"
             exit 1
           fi
