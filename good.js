@@ -1,0 +1,1 @@
+function main(){console.log('good 1')}
