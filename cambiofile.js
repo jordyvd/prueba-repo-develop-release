@@ -1,1 +1,1 @@
-function main(){console.log('prueba 5')}
+function main(){console.log('prueba 6')}
