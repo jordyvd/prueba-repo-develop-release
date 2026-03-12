@@ -14,8 +14,8 @@ jobs:
       - name: Fetch branches
         run: |
           git fetch origin release
-          git fetch origin develop
+          git fetch origin ${{ github.head_ref }}
 
-      - name: Check if release is ancestor of develop
+      - name: Check if release is ancestor of PR branch
         run: |
-          git merge-base --is-ancestor origin/release origin/develop
+          git merge-base --is-ancestor origin/release origin/${{ github.head_ref }}
