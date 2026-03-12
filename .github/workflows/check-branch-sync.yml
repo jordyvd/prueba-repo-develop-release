@@ -1,0 +1,21 @@
+name: Check branch sync
+
+on:
+  pull_request:
+    branches:
+      - release
+
+jobs:
+  check-sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Fetch branches
+        run: |
+          git fetch origin release
+          git fetch origin develop
+
+      - name: Check if release is ancestor of develop
+        run: |
+          git merge-base --is-ancestor origin/release origin/develop
