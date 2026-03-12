@@ -8,14 +8,26 @@ on:
 jobs:
   check-sync:
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repo
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Fetch branches
         run: |
           git fetch origin release
           git fetch origin ${{ github.head_ref }}
 
-      - name: Check if release is ancestor of PR branch
+      - name: Check that release has no unique commits
         run: |
-          git merge-base --is-ancestor origin/release origin/${{ github.head_ref }}
+          DIFF=$(git log origin/${{ github.head_ref }}..origin/release --no-merges)
+
+          if [ -n "$DIFF" ]; then
+            echo "❌ Release has commits that are not in the PR branch:"
+            echo "$DIFF"
+            exit 1
+          fi
+
+          echo "✅ Branches are synchronized"
